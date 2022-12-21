@@ -1,17 +1,18 @@
-use std::error;
-
-use crossterm::event::{KeyCode, KeyEvent};
+use std::path::Path;
+use std::error::Error;
+use std::fmt::{Display, Formatter, write};
+use clap::{self, Arg, ArgMatches, Values};
+use crossterm::event::{Event, KeyCode, KeyEvent};
 use tui::backend::Backend;
 use tui::layout::{Alignment, Constraint, Direction, Layout};
 use tui::style::{Color, Style};
 use tui::terminal::Frame;
 use tui::text::Text;
-use tui::widgets::{Block, Borders, Paragraph, Wrap};
+use tui::widgets::{Block, Borders, Paragraph, Widget, Wrap};
+use tui_textarea::TextArea;
 
 use crate::utils::LOGO;
 
-/// Application result type.
-pub type AppResult<T> = Result<T, Box<dyn error::Error>>;
 
 /// Application.
 #[derive(Debug)]
@@ -36,7 +37,7 @@ impl App {
     pub fn tick(&self) {}
 
     /// Renders the user interface widgets.
-    pub fn render<B: Backend>(&mut self, frame: &mut Frame<'_, B>) {
+    pub fn render<B: Backend>(&mut self, frame: &mut Frame<'_, B>, textarea: &TextArea) {
         let frame_size = frame.size();
 
         // Top bar, that will take 20% of main_canvas
@@ -55,43 +56,14 @@ impl App {
         let mid = splitted[1];
         let bottom_bar = splitted[2];
 
-        let mid_canvases = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(vec![
-                Constraint::Percentage(33),
-                Constraint::Percentage(33),
-                Constraint::Percentage(33)
-            ]).split(mid);
-
-        let mid_leftmost = mid_canvases[0];
-        let mid_middle = mid_canvases[1];
-        let mid_rightmost = mid_canvases[2];
-
         let app_title = Paragraph::new(Text::from(LOGO))
             .style(Style::default().fg(Color::Green))
             .block(Block::default().borders(Borders::ALL))
             .alignment(Alignment::Center)
             .wrap(Wrap { trim: false });
-        frame.render_widget(app_title, top_bar);
 
-        frame.render_widget(
-            Block::default()
-                .borders(Borders::ALL & !Borders::TOP)
-                .title("MidBarLeft"),
-            mid_leftmost
-        );
-        frame.render_widget(
-            Block::default()
-                .borders(Borders::ALL & !Borders::TOP)
-                .title("MidBarMid"),
-            mid_middle
-        );
-        frame.render_widget(
-            Block::default()
-                .borders(Borders::ALL & !Borders::TOP)
-                .title("MidBarRight"),
-            mid_rightmost
-        );
+        frame.render_widget(app_title, top_bar);
+        frame.render_widget(textarea.widget(), mid);
         frame.render_widget(
             Block::default()
                 .borders(Borders::ALL & !Borders::TOP)
