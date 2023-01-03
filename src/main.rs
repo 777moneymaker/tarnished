@@ -1,17 +1,17 @@
-use std::io;
+mod app;
+mod utils;
+
 use anyhow::Result;
+use crossterm::event::Event::Key;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyEvent},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use crossterm::event::Event::Key;
-use tui::{
-    backend::CrosstermBackend,
-    Terminal,
-};
+use std::io;
+use tui::{backend::CrosstermBackend, Terminal};
 
-use tarnished::app::{App, TarnishedAction};
+use app::{App, TarnishedAction};
 
 fn main() -> Result<()> {
     // setup terminal
@@ -24,10 +24,11 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     // Create a new app
-    let terminal_size = terminal.
-        size().
-        expect("Couldn't establish terminal size at init");
-    let mut application: App = App::new(terminal_size);
+    let terminal_size = terminal
+        .size()
+        .expect("Couldn't establish terminal size at init");
+
+    let mut application: App = App::new(terminal_size, None);
 
     loop {
         // Render frame
@@ -40,19 +41,18 @@ fn main() -> Result<()> {
             let action: TarnishedAction = application.handle_key_event(key_event);
             match action {
                 TarnishedAction::Quit => break,
-                TarnishedAction::Continue => continue
+                TarnishedAction::Continue => continue,
             }
         }
-
     }
 
     // restore terminal
     disable_raw_mode()?;
     execute!(
-            terminal.backend_mut(),
-            LeaveAlternateScreen,
-            DisableMouseCapture
-        )?;
+        terminal.backend_mut(),
+        LeaveAlternateScreen,
+        DisableMouseCapture
+    )?;
     terminal.show_cursor()?;
     Ok(())
 }
