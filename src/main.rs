@@ -1,4 +1,5 @@
 mod app;
+mod parser;
 mod utils;
 
 use anyhow::Result;
@@ -9,11 +10,38 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use std::io;
+use std::path::Path;
 use tui::{backend::CrosstermBackend, Terminal};
 
 use app::{App, TarnishedAction};
 
+fn string_ends_with_any(s: &String, suffixes: Vec<&str>) -> bool {
+    return suffixes.iter().any(|&suffix| s.ends_with(suffix));
+}
+
 fn main() -> Result<()> {
+    let files: Vec<String> = std::fs::read_dir("./")?
+        .map(|item| {
+            let entry = item.expect("Couldn't unwrap dir entry");
+            entry.path().as_path().to_owned()
+        })
+        .filter(|file| file.extension().is_some())
+        .filter(|file| {
+            vec!["fna", "fn", "fasta"].contains(&file.extension().unwrap().to_str().unwrap())
+        })
+        .map(|file| {
+            file.to_owned()
+                .into_os_string()
+                .into_string()
+                .expect("Couldn't unwrap string from filepath")
+        })
+        .collect();
+
+    if files.len() == 0 {
+        eprintln!("Couldn't find any valid fasta. Consider adding only 'fa' or 'fasta' extensions to your files");
+        std::process::exit(1);
+    }
+
     // setup terminal
     enable_raw_mode()?;
 
@@ -28,7 +56,7 @@ fn main() -> Result<()> {
         .size()
         .expect("Couldn't establish terminal size at init");
 
-    let mut application: App = App::new(terminal_size, None);
+    let mut application: App = App::new(terminal_size, Some(files));
 
     loop {
         // Render frame

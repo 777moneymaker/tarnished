@@ -24,11 +24,18 @@ impl<'a> AppWidgets<'a> {
             .style(Style::default())
             .alignment(Alignment::Center);
 
-        let files: Vec<ListItem> = files.iter().map(|file| ListItem::new(file.clone())).collect();
+        let files: Vec<ListItem> = files
+            .iter()
+            .map(|file| ListItem::new(file.clone()))
+            .collect();
         let file_list: List = List::new(files)
             .block(Block::default().title("List").borders(Borders::ALL))
             .style(Style::default().fg(Color::White))
-            .highlight_style(Style::default().add_modifier(Modifier::ITALIC))
+            .highlight_style(
+                Style::default()
+                    .add_modifier(Modifier::ITALIC)
+                    .fg(Color::Rgb(148, 0, 211)),
+            )
             .highlight_symbol("--> ");
 
         let chart: BarChart = BarChart::default()
@@ -44,5 +51,9 @@ impl<'a> AppWidgets<'a> {
             bar_chart: chart,
             file_list_state: Cell::new(file_list_state),
         }
+    }
+
+    fn generate_bar_chart(files: Option<Vec<String>>) {
+        todo!("Implement this");
     }
 }

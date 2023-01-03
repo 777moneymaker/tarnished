@@ -1,17 +1,16 @@
 mod app_parts;
 mod app_widgets;
 
-use std::cmp::Ordering;
 use anyhow::Result;
 use crossterm::event::Event::Key;
 use crossterm::event::{KeyCode, KeyEvent};
+use std::cmp::Ordering;
 use std::fmt::write;
 use tui::backend::Backend;
 use tui::layout::{Constraint, Direction, Layout, Rect};
 use tui::style::{Color, Modifier, Style};
 use tui::terminal::Frame;
 use tui::text::Span;
-use tui::widgets::{BarChart, Block, Borders, List, ListItem, ListState, Paragraph};
 
 use app_parts::AppParts;
 use app_widgets::AppWidgets;
@@ -28,10 +27,10 @@ pub struct App<'a> {
 impl App<'_> {
     /// Constructs a new instance of [`App`] with their parts and running state
     pub fn new(frame_size: Rect, files: Option<Vec<String>>) -> Self {
-        let default_items =
-            vec!["Test1", "Test2", "Test3"]
+        let default_items = vec!["Test1", "Test2", "Test3"]
             .iter()
-            .map(|file| file.to_string()).collect();
+            .map(|file| file.to_string())
+            .collect();
         let items: Vec<String> = files.unwrap_or(default_items);
         App {
             parts: AppParts::generate_parts(frame_size),
@@ -70,33 +69,39 @@ impl App<'_> {
         match event.code {
             KeyCode::Esc => TarnishedAction::Quit,
             key @ (KeyCode::Down | KeyCode::Up) => {
-                let state = self.widgets.file_list_state.get_mut();
-                let selected_idx = state
-                    .selected()
-                    .expect("Couldn't get the selected item index")
-                    as isize;
-                let len = self.files.len() as isize;
-
-                let new_idx: isize = match key {
-                    KeyCode::Down => selected_idx + 1,
-                    KeyCode::Up => selected_idx - 1,
-                    _ => { 0isize }
-                };
-
-                let updated_idx: isize = if new_idx < 0 {
-                    len - 1
-                } else if new_idx > (len as isize - 1){
-                    0
-                } else {
-                    new_idx
-                };
-
-                state.select(Some(updated_idx as usize));
-
+                self.change_selected_item(key);
+                TarnishedAction::Continue
+            }
+            KeyCode::Enter => {
+                // TODO: Implement plot drawing on this event
                 TarnishedAction::Continue
             }
             _ => TarnishedAction::Continue,
         }
+    }
+
+    fn change_selected_item(&mut self, key: KeyCode) {
+        let state = self.widgets.file_list_state.get_mut();
+        let selected_idx = state
+            .selected()
+            .expect("Couldn't get the selected item index") as isize;
+        let len = self.files.len() as isize;
+
+        let new_idx: isize = match key {
+            KeyCode::Down => selected_idx + 1,
+            KeyCode::Up => selected_idx - 1,
+            _ => 0isize,
+        };
+
+        let updated_idx: isize = if new_idx < 0 {
+            len - 1
+        } else if new_idx > (len as isize - 1) {
+            0
+        } else {
+            new_idx
+        };
+
+        state.select(Some(updated_idx as usize));
     }
 }
 
