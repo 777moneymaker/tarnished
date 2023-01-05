@@ -42,7 +42,6 @@ impl<'a> App<'a> {
         let app_name = Paragraph::new(Span::from(LOGO))
             .block(
                 Block::default()
-                    .title("Lorem ipsum title")
                     .style(Style::default().bg(Color::Black))
                     .borders(Borders::ALL),
             )
