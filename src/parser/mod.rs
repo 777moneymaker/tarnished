@@ -1,16 +1,24 @@
 mod tests;
 
+use std::io::Read;
+
 use anyhow::Result;
 use bio::io::fasta::Reader;
 use tui::text::Text;
 
 trait NucleotideCounter {
-    fn count(&self, item: &str) -> u64;
+    fn count(&self, item: char) -> u64;
 }
 
-impl NucleotideCounter for String {
-    fn count(&self, item: &str) -> u64 {
-        self.matches(item).count() as u64
+impl NucleotideCounter for [u8] {
+    fn count(&self, item: char) -> u64 {
+        let mut sum: u64 = 0;
+        for ch in self.bytes() {
+            if ch.expect("Couldn't read nucleotide as byte") == item as u8 {
+                sum += 1;
+            }
+        }
+        sum
     }
 }
 
@@ -29,14 +37,17 @@ impl FastaRecord {
             .records()
             .next()
             .expect(format!("File {} is empty", &path).as_str())?;
-        let id = record.id().to_string();
-        let seq = String::from_utf8(record.seq().to_vec())?;
 
+        record
+            .check()
+            .expect(format!("File {} contains invalid fasta format", path).as_str());
+        let id: String = record.id().to_string();
+        let seq = record.seq();
         let counts = [
-            ("A", seq.count("A")),
-            ("T", seq.count("T")),
-            ("G", seq.count("G")),
-            ("C", seq.count("C")),
+            ("A", seq.count('A')),
+            ("T", seq.count('T')),
+            ("G", seq.count('G')),
+            ("C", seq.count('C')),
         ];
 
         Ok(Self {

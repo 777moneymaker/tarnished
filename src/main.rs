@@ -11,6 +11,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use indicatif::{ProgressBar, ProgressStyle};
 use parser::FastaRecord;
 use std::io;
 use std::path::Path;
@@ -19,6 +20,7 @@ use tui::{backend::CrosstermBackend, Terminal};
 
 use crate::app::App;
 
+const VALID_EXTS: [&'static str; 3] = ["fna", "fn", "fasta"];
 const MIN_TERMINAL_SIZE: Rect = Rect {
     x: 0,
     y: 0,
@@ -46,11 +48,8 @@ fn main() -> Result<()> {
     let files: Vec<String> = matches
         .filter_map(|file| {
             let path = Path::new(file);
-            let extension = path
-                .extension()?
-                .to_str()
-                .expect("");
-            match vec!["fna", "fn", "fasta"].contains(&extension) {
+            let extension = path.extension()?.to_str().expect("");
+            match VALID_EXTS.contains(&extension) {
                 true => Some(path),
                 false => None,
             }
@@ -68,11 +67,24 @@ fn main() -> Result<()> {
         std::process::exit(1);
     }
 
+    let bar = ProgressBar::new(files.len() as u64);
+    bar.set_style(
+        ProgressStyle::with_template(
+            "[{elapsed}] [File: {msg}] {bar:60.green} | [Done: {percent}%]",
+        )
+        .unwrap()
+        .progress_chars("❚.."),
+    );
+
     let records: Vec<FastaRecord> = files
         .iter()
-        .map(|file| FastaRecord::parse((&file).to_string()).expect("Couldn't read a file"))
+        .map(|file| {
+            bar.set_message(file.clone());
+            bar.inc(1);
+            FastaRecord::parse((&file).to_string()).expect("Couldn't read a file")
+        })
         .collect();
-
+    bar.finish();
     // setup terminal
     enable_raw_mode()?;
 
