@@ -70,7 +70,7 @@ fn main() -> Result<()> {
     let bar = ProgressBar::new(files.len() as u64);
     bar.set_style(
         ProgressStyle::with_template(
-            "[{elapsed}] [File: {msg}] {bar:60.green} | [Done: {percent}%]",
+            "🦀🦀🦀 [{elapsed:.green}] [File: {msg:.yellow}] {bar:60.yellow} | [Done: {percent}%]",
         )
         .unwrap()
         .progress_chars("❚.."),
