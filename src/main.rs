@@ -39,7 +39,7 @@ fn main() -> Result<()> {
                 .help("files in fasta format ending with [.fa | .fna | .fasta]")
                 .required(true),
         )
-        .get_matches_safe()?;
+        .get_matches();
 
     let matches = args.values_of("files").expect("No files provided");
 
@@ -47,10 +47,9 @@ fn main() -> Result<()> {
         .filter_map(|file| {
             let path = Path::new(file);
             let extension = path
-                .extension()
-                .expect("Couldn't extract extension from one or more files")
+                .extension()?
                 .to_str()
-                .unwrap();
+                .expect("");
             match vec!["fna", "fn", "fasta"].contains(&extension) {
                 true => Some(path),
                 false => None,
