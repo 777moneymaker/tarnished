@@ -33,7 +33,7 @@ fn main() -> Result<()> {
     let args = ClapApp::new("Tarnished")
         .about("App for testing the nucleotide abundance in fasta files")
         .author("Miłosz Chodkowski")
-        .version("0.1.0")
+        .version("0.2.0")
         .arg(
             Arg::with_name("files")
                 .multiple(true)
