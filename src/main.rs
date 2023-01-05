@@ -37,14 +37,13 @@ fn main() -> Result<()> {
                 .multiple(true)
                 .takes_value(true)
                 .help("files in fasta format ending with [.fa | .fna | .fasta]")
-                .required(true)
-        ).get_matches_safe()?;
+                .required(true),
+        )
+        .get_matches_safe()?;
 
-    let matches = args
-        .values_of("files")
-        .expect("No files provided");
-    
-        let files: Vec<String> = matches
+    let matches = args.values_of("files").expect("No files provided");
+
+    let files: Vec<String> = matches
         .filter_map(|file| {
             let path = Path::new(file);
             let extension = path

@@ -2,12 +2,11 @@ pub mod app_parts;
 
 use app_parts::AppParts;
 use tui::backend::Backend;
-use tui::symbols::bar::Set;
 use tui::layout::{Alignment, Rect};
 use tui::style::{Color, Modifier, Style};
 use tui::terminal::Frame;
 use tui::text::Span;
-use tui::widgets::{ListState, Axis};
+use tui::widgets::ListState;
 use tui::widgets::{BarChart, Block, Borders, List, ListItem, Paragraph};
 
 use crate::parser::FastaRecord;
@@ -71,14 +70,14 @@ impl<'a> App<'a> {
 
         let mut file_list_state = ListState::default();
         file_list_state.select(Some(selected));
-        
+
         let bar_gap = 1;
         let bc = BarChart::default()
             .block(
                 Block::default()
                     .title(self.records[selected].id.clone())
                     .borders(Borders::ALL)
-                    .title_alignment(Alignment::Left)
+                    .title_alignment(Alignment::Left),
             )
             .bar_width((self.parts.right_block.width / 4) - bar_gap)
             .bar_gap(bar_gap)
@@ -94,7 +93,6 @@ impl<'a> App<'a> {
             )
             .label_style(Style::default().fg(Color::White))
             .data(&self.records[selected].nucleotide_counts);
-
 
         frame.render_widget(app_name, self.parts.top_bar);
         frame.render_stateful_widget(file_list, self.parts.left_block, &mut file_list_state);
