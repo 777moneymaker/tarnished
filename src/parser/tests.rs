@@ -1,10 +1,9 @@
-
 #[cfg(test)]
-mod tests {    
-    use std::{path::PathBuf, collections::HashMap};
+
+mod tests {
+    use std::path::PathBuf;
 
     use crate::parser::FastaRecord;
-
 
     #[test]
     fn test_parsing() {
@@ -13,16 +12,13 @@ mod tests {
         let file = file.as_path().to_str().unwrap();
         let parsed_result = FastaRecord::parse(file.to_string());
         let parsed_record = parsed_result.unwrap();
-        
+
         assert_eq!(
             parsed_record,
             FastaRecord {
                 id: "AB626963.1".to_string(),
-                sequence: "TAGATACATAAATTTTGTATTTGATGAATATTTAATAGGTTAGATAAGTTTGAAAAGT".to_string(),
-                nucleotide_abundance: HashMap::from([('A', 23), ('T', 24), ('G', 10), ('C', 1)]),
-                gc_percentage: 0.18965517
+                nucleotide_counts: [("A", 23), ("T", 24), ("G", 10), ("C", 1)],
             }
         )
     }
 }
-
