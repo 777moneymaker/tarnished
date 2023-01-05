@@ -71,15 +71,7 @@ impl<'a> App<'a> {
 
         let mut file_list_state = ListState::default();
         file_list_state.select(Some(selected));
-
-
-        let dataset = Dataset::default()
-            .name("data1")
-            .marker(symbols::Marker::Dot)
-            .graph_type(GraphType::Scatter)
-            .style(Style::default().fg(Color::Cyan))
-            .data(&[(0.0, 5.0), (1.0, 6.0), (1.5, 6.434)]);
-
+        
         let bar_gap = 1;
         let bc = BarChart::default()
             .block(
