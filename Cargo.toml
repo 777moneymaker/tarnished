@@ -1,6 +1,6 @@
 [package]
 name = "tarnished"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 author = "Miłosz Chodkowski"
 description = "Very simple CLI app for testing the percent of nucleotides in FASTA files"
@@ -8,7 +8,7 @@ readme = "README.md"
 license = "GPL-3.0-only"
 repository = "https://github.com/777moneymaker/tarnished.git"
 homepage = "https://github.com/777moneymaker/tarnished"
-keywords = ["fasta", "nucleotide", "count", "tui"]
+keywords = ["fasta", "nucleotide", "count", "tui", "bioinformatics"]
 categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
