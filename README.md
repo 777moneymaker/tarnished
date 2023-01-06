@@ -1,12 +1,12 @@
-# Blackie
-Simple CLI app for testing the % of true black pixels in a pic.
+# Tarnished
+Simple TUI app for check the nucleotide percentage in each fasta file.
 
 I don't know what more.
 
 # Installation
 With cargo:
 ```
-cargo install blackie
+cargo install tarnished
 ```
 
 Locally:
