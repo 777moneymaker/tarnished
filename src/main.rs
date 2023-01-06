@@ -45,22 +45,23 @@ fn main() -> Result<()> {
 
     let matches = args.values_of("files").expect("No files provided");
 
-    let files: Vec<String> = matches
-        .filter_map(|file| {
-            let path = Path::new(file);
-            let extension = path.extension()?.to_str().expect("");
-            match VALID_EXTS.contains(&extension) {
-                true => Some(path),
-                false => None,
-            }
-        })
-        .map(|file| {
-            file.to_owned()
-                .into_os_string()
-                .into_string()
-                .expect("Couldn't unwrap string from filepath")
-        })
-        .collect();
+    let mut files = Vec::<String>::with_capacity(20000);
+    let filterd_iterator = matches.filter_map(|file| {
+        let path = Path::new(file);
+        let extension = path.extension()?.to_str().expect("");
+        match VALID_EXTS.contains(&extension) {
+            true => Some(path),
+            false => None,
+        }
+    });
+    for file in filterd_iterator {
+        let fl = file
+            .to_owned()
+            .into_os_string()
+            .into_string()
+            .expect("Couldn't unwrap string from filepath");
+        files.push(fl);
+    }
 
     if files.is_empty() {
         eprintln!("Couldn't find any valid fasta. Consider adding only 'fa' or 'fasta' extensions to your files");

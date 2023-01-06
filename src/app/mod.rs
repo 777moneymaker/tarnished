@@ -48,11 +48,7 @@ impl<'a> App<'a> {
             .style(Style::default())
             .alignment(Alignment::Center);
 
-        let files: Vec<ListItem> = self
-            .records
-            .iter()
-            .map(ListItem::new)
-            .collect();
+        let files: Vec<ListItem> = self.records.iter().map(ListItem::new).collect();
         let file_list: List = List::new(files)
             .block(
                 Block::default()
