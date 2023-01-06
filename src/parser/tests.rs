@@ -8,7 +8,7 @@ mod tests {
     #[test]
     fn test_parsing() {
         let mut file = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        file.push("src/parser/test_files/AB626963.fna".to_string());
+        file.push("src/parser/test_files/AB626963.fna");
         let file = file.as_path().to_str().unwrap();
         let parsed_result = FastaRecord::parse(file.to_string());
         let parsed_record = parsed_result.unwrap();

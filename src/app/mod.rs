@@ -25,7 +25,7 @@ impl<'a> App<'a> {
     pub fn new(frame_size: Rect, records: &'a Vec<FastaRecord>) -> App<'a> {
         App {
             parts: AppParts::generate_parts(frame_size),
-            records: records,
+            records,
             running: false,
         }
     }
@@ -51,7 +51,7 @@ impl<'a> App<'a> {
         let files: Vec<ListItem> = self
             .records
             .iter()
-            .map(|record| ListItem::new(record))
+            .map(ListItem::new)
             .collect();
         let file_list: List = List::new(files)
             .block(

@@ -20,7 +20,7 @@ use tui::{backend::CrosstermBackend, Terminal};
 
 use crate::app::App;
 
-const VALID_EXTS: [&'static str; 3] = ["fna", "fn", "fasta"];
+const VALID_EXTS: [&str; 3] = ["fna", "fn", "fasta"];
 const MIN_TERMINAL_SIZE: Rect = Rect {
     x: 0,
     y: 0,
@@ -62,7 +62,7 @@ fn main() -> Result<()> {
         })
         .collect();
 
-    if files.len() == 0 {
+    if files.is_empty() {
         eprintln!("Couldn't find any valid fasta. Consider adding only 'fa' or 'fasta' extensions to your files");
         std::process::exit(1);
     }
@@ -130,8 +130,8 @@ fn main() -> Result<()> {
 
     loop {
         // Render frame
-        terminal.draw(|mut frame| {
-            application.render(&mut frame, selected_idx as usize);
+        terminal.draw(|frame| {
+            application.render(frame, selected_idx as usize);
         })?;
 
         let event = event::read()?;

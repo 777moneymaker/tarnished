@@ -22,7 +22,7 @@ impl NucleotideCounter for [u8] {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FastaRecord {
     pub id: String,
     pub nucleotide_counts: [(&'static str, u64); 4],
@@ -31,16 +31,16 @@ pub struct FastaRecord {
 impl FastaRecord {
     pub fn parse(path: String) -> Result<Self> {
         let reader = Reader::from_file(&path)
-            .expect(format!("Couldn't create a reader from file {}", path).as_str());
+            .unwrap_or_else(|_| panic!("Couldn't create a reader from file {}", path));
 
         let record = reader
             .records()
             .next()
-            .expect(format!("File {} is empty", &path).as_str())?;
+            .unwrap_or_else(|| panic!("File {} is empty", &path))?;
 
         record
             .check()
-            .expect(format!("File {} contains invalid fasta format", path).as_str());
+            .unwrap_or_else(|_| panic!("File {} contains invalid fasta format", path));
         let id: String = record.id().to_string();
         let seq = record.seq();
         let counts = [
@@ -51,7 +51,7 @@ impl FastaRecord {
         ];
 
         Ok(Self {
-            id: id,
+            id,
             nucleotide_counts: counts,
         })
     }
