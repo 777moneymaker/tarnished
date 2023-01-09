@@ -74,7 +74,7 @@ impl<'a> App<'a> {
                     .borders(Borders::ALL)
                     .title_alignment(Alignment::Left),
             )
-            .bar_width((self.parts.right_block.width / 4) - bar_gap)
+            .bar_width((self.parts.right_block.width / 4) - (bar_gap * 2))
             .bar_gap(bar_gap)
             .bar_style(
                 Style::default()

@@ -1,6 +1,6 @@
 [package]
 name = "tarnished"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 author = "Miłosz Chodkowski"
 description = "Very simple CLI app for testing the percent of nucleotides in FASTA files"

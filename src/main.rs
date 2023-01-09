@@ -33,7 +33,7 @@ fn main() -> Result<()> {
     let args = ClapApp::new("Tarnished")
         .about("App for testing the nucleotide abundance in fasta files")
         .author("Miłosz Chodkowski")
-        .version("0.3.0")
+        .version("0.4.0")
         .arg(
             Arg::with_name("files")
                 .multiple(true)
@@ -45,7 +45,7 @@ fn main() -> Result<()> {
 
     let matches = args.values_of("files").expect("No files provided");
 
-    let mut files = Vec::<String>::with_capacity(20000);
+    let mut files = Vec::<String>::with_capacity(20_000);
     let filterd_iterator = matches.filter_map(|file| {
         let path = Path::new(file);
         let extension = path.extension()?.to_str().expect("");
